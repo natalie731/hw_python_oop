@@ -1,9 +1,6 @@
 from dataclasses import dataclass
 from typing import List, Dict, Type
 
-H_IN_MIN: int = 60
-M_IN_KM: int = 1000
-
 
 @dataclass
 class InfoMessage:
@@ -14,7 +11,7 @@ class InfoMessage:
     speed: float
     calories: float
 
-    def get_massage(self) -> str:
+    def get_message(self) -> str:
         return(f'Тип тренировки: {self.training_type}; '
                f'Длительность: {self.duration:.3f} ч.; '
                f'Дистанция: {self.distance:.3f} км; '
@@ -25,6 +22,8 @@ class InfoMessage:
 
 class Training:
     """Базовый класс тренировки."""
+    H_IN_MIN: int = 60
+    M_IN_KM: int = 1000
     LEN_STEP: float = 0.65
 
     def __init__(self,
@@ -42,7 +41,7 @@ class Training:
 
     def get_distance(self) -> float:
         """Получить дистанцию в км."""
-        return self.action * self.LEN_STEP / M_IN_KM
+        return self.action * self.LEN_STEP / self.M_IN_KM
 
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
@@ -71,11 +70,11 @@ class Running(Training):
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        duration_min = self.duration * H_IN_MIN
+        duration_min = self.duration * self.H_IN_MIN
         spent_calories: float = (
             (self.COEFF_CALORIE_1 * self.get_mean_speed()
              - self.COEFF_CALORIE_2) * self.weight
-            / M_IN_KM * duration_min
+            / self.M_IN_KM * duration_min
         )
         return spent_calories
 
@@ -97,7 +96,7 @@ class SportsWalking(Training):
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        duration_min = self.duration * H_IN_MIN
+        duration_min = self.duration * self.H_IN_MIN
         spent_calories: float = (
             (self.COEFF_CALORIE_1 * self.weight + (
                 self.get_mean_speed()**self.COEFF_CALORIE_2 // self.height
@@ -127,7 +126,7 @@ class Swimming(Training):
         """Получить среднюю скорость движения."""
         mean_speed: float = (
             self.length_pool * self.count_pool
-            / M_IN_KM / self.duration
+            / self.M_IN_KM / self.duration
         )
         return mean_speed
 
@@ -158,7 +157,7 @@ def main(training: Training) -> None:
     """Главная функция."""
     info: InfoMessage = training.show_training_info()
 
-    print(info.get_massage())
+    print(info.get_message())
 
 
 if __name__ == '__main__':

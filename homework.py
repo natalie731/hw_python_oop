@@ -1,5 +1,5 @@
-from dataclasses import dataclass, asdict
-from typing import List, Dict, Type
+from dataclasses import asdict, dataclass
+from typing import Dict, List, Type
 
 
 @dataclass
@@ -10,14 +10,15 @@ class InfoMessage:
     distance: float
     speed: float
     calories: float
-    message = ('Тип тренировки: {}; '
+
+    MESSAGE = ('Тип тренировки: {}; '
                'Длительность: {:.3f} ч.; '
                'Дистанция: {:.3f} км; '
                'Ср. скорость: {:.3f} км/ч; '
                'Потрачено ккал: {:.3f}.')
 
     def get_message(self) -> str:
-        return self.message.format(*asdict(self).values())
+        return self.MESSAGE.format(*asdict(self).values())
 
 
 class Training:
@@ -27,9 +28,9 @@ class Training:
     LEN_STEP: float = 0.65
 
     def __init__(self,
-                 action: float,
-                 duration: float,
-                 weight: float,
+                 action: int,
+                 duration: int,
+                 weight: int,
                  ) -> None:
         self.action = action
         self.duration = duration
@@ -80,10 +81,10 @@ class SportsWalking(Training):
     COEFF_CALORIE_3: float = 0.029
 
     def __init__(self,
-                 action: float,
-                 duration: float,
-                 weight: float,
-                 height: float
+                 action: int,
+                 duration: int,
+                 weight: int,
+                 height: int
                  ) -> None:
         super().__init__(action, duration, weight)
         self.height = height
@@ -106,11 +107,11 @@ class Swimming(Training):
     COEFF_CALORIE_2: int = 2
 
     def __init__(self,
-                 action: float,
-                 duration: float,
-                 weight: float,
-                 length_pool: float,
-                 count_pool: float
+                 action: int,
+                 duration: int,
+                 weight: int,
+                 length_pool: int,
+                 count_pool: int
                  ) -> None:
         super().__init__(action, duration, weight)
         self.length_pool = length_pool
@@ -133,7 +134,7 @@ class Swimming(Training):
         return spent_calories
 
 
-def read_package(workout_type: str, data: List[float]) -> Training:
+def read_package(workout_type: str, data: List[int]) -> Training:
     """Прочитать данные полученные от датчиков."""
     dict_workout_type: Dict[str, Type[Training]]
     dict_workout_type = {'SWM': Swimming,
@@ -142,8 +143,8 @@ def read_package(workout_type: str, data: List[float]) -> Training:
 
     if workout_type in dict_workout_type:
         return dict_workout_type[workout_type](*data)
-
-    raise ValueError('В базе отсутствует новый тип тренировки,'
+    else:
+        raise ValueError('В базе отсутствует новый тип тренировки,'
                      'полученной с датчиков.')
 
 
@@ -162,6 +163,5 @@ if __name__ == '__main__':
     ]
 
     for workout_type, data in packages:
-        data_float = list(map(float, data))
-        training = read_package(workout_type, data_float)
+        training = read_package(workout_type, data)
         main(training)

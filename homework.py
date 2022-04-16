@@ -27,7 +27,7 @@ class Training:
     LEN_STEP: float = 0.65
 
     def __init__(self,
-                 action: int,
+                 action: float,
                  duration: float,
                  weight: float,
                  ) -> None:
@@ -80,7 +80,7 @@ class SportsWalking(Training):
     COEFF_CALORIE_3: float = 0.029
 
     def __init__(self,
-                 action: int,
+                 action: float,
                  duration: float,
                  weight: float,
                  height: float
@@ -106,11 +106,11 @@ class Swimming(Training):
     COEFF_CALORIE_2: int = 2
 
     def __init__(self,
-                 action: int,
+                 action: float,
                  duration: float,
                  weight: float,
                  length_pool: float,
-                 count_pool: int
+                 count_pool: float
                  ) -> None:
         super().__init__(action, duration, weight)
         self.length_pool = length_pool
@@ -133,7 +133,7 @@ class Swimming(Training):
         return spent_calories
 
 
-def read_package(workout_type: str, data: List[int]) -> Training:
+def read_package(workout_type: str, data: List[float]) -> Training:
     """Прочитать данные полученные от датчиков."""
     dict_workout_type: Dict[str, Type[Training]]
     dict_workout_type = {'SWM': Swimming,
@@ -162,5 +162,6 @@ if __name__ == '__main__':
     ]
 
     for workout_type, data in packages:
-        training = read_package(workout_type, data)
+        data_float = list(map(float, data))
+        training = read_package(workout_type, data_float)
         main(training)
